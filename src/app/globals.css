@@ -1,0 +1,308 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+@theme {
+  --color-ink: #0d0d0d;
+  --color-muted: #595959;
+  --color-line: #e5e5e5;
+  --color-hairline: #f0f0f0;
+  --color-accent: #3451c7;
+  --color-wash: #f7f8fb;
+  --color-wash-line: #e4e7f0;
+  --spacing-sidebar: 14rem;
+}
+
+/* ---------------------------------------------------------------- base */
+
+html {
+  /* Scales gently from phones to large monitors: 16px → 19px. */
+  font-size: clamp(16px, 12.5px + 0.3vw, 19px);
+  /* Room for the fixed mobile top bar when jumping to a #section. */
+  scroll-padding-top: 4.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (min-width: 48rem) {
+  html {
+    scroll-padding-top: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: #dfe5fb;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* A link whose clickable area covers its nearest `relative` ancestor (e.g. a card). */
+@utility stretched-link {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+/* ------------------------------------------------------------ markdown */
+
+.markdown {
+  line-height: 1.7;
+  overflow-wrap: break-word;
+}
+
+.markdown > * + * {
+  margin-top: 1.1em;
+}
+
+.markdown :is(h2, h3, h4, h5, h6) {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  scroll-margin-top: 1.5rem;
+}
+
+.markdown h2 {
+  margin-top: 2.6em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--color-line);
+  font-size: 1.35rem;
+}
+
+.markdown h3 {
+  margin-top: 2em;
+  font-size: 1.1rem;
+}
+
+.markdown :is(h4, h5, h6) {
+  margin-top: 1.6em;
+  font-size: 1rem;
+}
+
+.markdown :is(h2, h3, h4, h5, h6) + * {
+  margin-top: 0.7em;
+}
+
+.markdown a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.markdown a:hover {
+  text-decoration-color: currentColor;
+}
+
+.markdown strong {
+  font-weight: 650;
+}
+
+.markdown :is(ul, ol) {
+  padding-left: 1.4em;
+}
+
+.markdown ul {
+  list-style: disc;
+}
+
+.markdown ol {
+  list-style: decimal;
+}
+
+.markdown li + li {
+  margin-top: 0.35em;
+}
+
+.markdown li::marker {
+  color: var(--color-muted);
+}
+
+.markdown blockquote {
+  border-left: 2px solid var(--color-ink);
+  padding-left: 1.1em;
+  color: var(--color-muted);
+}
+
+.markdown hr {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  margin: 2.4em 0;
+}
+
+.markdown :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--color-wash);
+  border: 1px solid var(--color-wash-line);
+  padding: 0.1em 0.35em;
+}
+
+.markdown pre {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  background: var(--color-wash);
+  border: 1px solid var(--color-wash-line);
+  padding: 1em 1.2em;
+  overflow-x: auto;
+}
+
+.markdown img {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown figure img {
+  display: block;
+  margin-inline: auto;
+}
+
+.markdown figure {
+  margin-block: 2em;
+}
+
+.markdown figcaption {
+  margin-top: 0.8em;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.markdown .table-scroll {
+  overflow-x: auto;
+}
+
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.markdown :is(th, td) {
+  padding: 0.55em 0.9em;
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+}
+
+.markdown :is(th, td)[align="right"] {
+  text-align: right;
+}
+
+.markdown :is(th, td)[align="center"] {
+  text-align: center;
+}
+
+.markdown thead th {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+  border-bottom-color: var(--color-ink);
+}
+
+.markdown .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.3em;
+}
+
+.markdown .katex {
+  font-size: 1.08em;
+}
+
+/* Footnotes (GFM) */
+.markdown .footnotes {
+  margin-top: 3em;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+}
+
+.markdown .footnotes h2 {
+  font-size: 0.9rem;
+}
+
+/* Short bodies inside homepage lists (news, experience, …). */
+.markdown-compact {
+  line-height: 1.65;
+}
+
+.markdown-compact > * + * {
+  margin-top: 0.6em;
+}
+
+/* ------------------------------------------------ code highlighting */
+
+.hljs-comment,
+.hljs-quote {
+  color: #7a7a7a;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-type {
+  color: #2f3f9e;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-symbol {
+  color: #36713a;
+}
+
+.hljs-number,
+.hljs-literal {
+  color: #9a4b12;
+}
+
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: #0d0d0d;
+  font-weight: 600;
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-variable,
+.hljs-params {
+  color: #5b3c8f;
+}
+
+.hljs-meta {
+  color: #7a7a7a;
+}

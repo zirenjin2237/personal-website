@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" role="img" aria-label="Three-stage pipeline diagram">
+  <rect width="900" height="260" fill="#fff"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5 0 10z" fill="#0d0d0d"/></marker></defs>
+  <g font-family="monospace" font-size="22" text-anchor="middle">
+    <rect x="40" y="80" width="200" height="100" fill="#f7f8fb" stroke="#0d0d0d" stroke-width="2"/>
+    <text x="140" y="138">Input</text>
+    <rect x="350" y="80" width="200" height="100" fill="#f7f8fb" stroke="#0d0d0d" stroke-width="2"/>
+    <text x="450" y="126">Frozen</text><text x="450" y="154">encoder</text>
+    <rect x="660" y="80" width="200" height="100" fill="#eef1fc" stroke="#3451c7" stroke-width="2"/>
+    <text x="760" y="126" fill="#3451c7">Trainable</text><text x="760" y="154" fill="#3451c7">head</text>
+  </g>
+  <g stroke="#0d0d0d" stroke-width="2" marker-end="url(#a)"><path d="M240 130H345"/><path d="M550 130H655"/></g>
+</svg>
