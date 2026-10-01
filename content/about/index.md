@@ -5,7 +5,8 @@ name: "Ziren Jin"
 tagline: "Computer Science · University of Michigan"
 description: "Personal website of Ziren Jin — computer science at the University of Michigan."
 location: "Ann Arbor, MI"
-# photo: "./photo.jpg"          # a portrait next to this file; shown in grayscale
+photo: "./photo.jpg"
+photoAlt: "Portrait of Ziren Jin"
 
 contact: "The best way to reach me is by email."
 

@@ -11,9 +11,20 @@ export function AboutSection({ about }: { about: About }) {
       aria-labelledby="about-heading"
       className={`border-b border-line pt-12 pb-14 md:pt-20 ${PAGE_GUTTER}`}
     >
-      <div
-        className={`${CONTENT_WIDTH} grid items-start gap-10 ${about.photo ? "lg:grid-cols-[minmax(0,1fr)_13rem]" : ""}`}
-      >
+      <div className={CONTENT_WIDTH}>
+        {/* On desktop the photo sits in the sidebar; phones have no sidebar, so show it here. */}
+        {about.photo && (
+          <div className="relative mb-7 aspect-[4/5] w-32 overflow-hidden rounded-xl bg-line md:hidden">
+            <ContentImage
+              src={about.photo.src}
+              alt={about.photo.alt}
+              sizes="8rem"
+              className="object-[50%_30%]"
+              priority
+            />
+          </div>
+        )}
+
         <div>
           <h1 id="about-heading" className="font-mono text-4xl leading-tight font-extrabold tracking-tighter sm:text-[2.6rem]">
             {about.name}
@@ -43,18 +54,6 @@ export function AboutSection({ about }: { about: About }) {
             </ul>
           )}
         </div>
-
-        {about.photo && (
-          <div className="relative order-first aspect-[4/5] w-36 overflow-hidden bg-line sm:w-44 lg:order-none lg:w-full">
-            <ContentImage
-              src={about.photo.src}
-              alt={about.photo.alt}
-              sizes="(min-width: 1024px) 13rem, 11rem"
-              className="grayscale"
-              priority
-            />
-          </div>
-        )}
       </div>
     </section>
   );

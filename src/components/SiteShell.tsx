@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import type { About } from "@/lib/content";
+import { ContentImage } from "./ContentImage";
 import { SectionNav, type NavItem } from "./SectionNav";
 
 interface SiteShellProps {
-  name: string;
-  tagline?: string;
+  profile: Pick<About, "name" | "tagline" | "photo">;
   /** Heading above the sidebar links, e.g. "Index" or "Contents". */
   navLabel: string;
   navItems: NavItem[];
@@ -17,7 +18,8 @@ interface SiteShellProps {
  * Page frame shared by every route: fixed left sidebar on desktop, compact
  * horizontally scrolling bar on mobile, scrollable main column.
  */
-export function SiteShell({ name, tagline, navLabel, navItems, back, children }: SiteShellProps) {
+export function SiteShell({ profile, navLabel, navItems, back, children }: SiteShellProps) {
+  const { name, tagline, photo } = profile;
   const year = new Date().getFullYear();
 
   return (
@@ -32,6 +34,11 @@ export function SiteShell({ name, tagline, navLabel, navItems, back, children }:
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-sidebar flex-col justify-between overflow-y-auto border-r border-line bg-white px-6 py-10 md:flex">
         <div>
           <div className="mb-10">
+            {photo && (
+              <Link href="/" tabIndex={-1} aria-hidden="true" className="relative mb-5 block aspect-[4/5] w-full overflow-hidden rounded-xl bg-line">
+                <ContentImage src={photo.src} alt="" sizes="11rem" className="object-[50%_30%]" priority />
+              </Link>
+            )}
             <Link href="/" className="font-mono text-[0.95rem] leading-tight font-bold tracking-tight hover:text-accent">
               {name}
             </Link>

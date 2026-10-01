@@ -41,8 +41,7 @@ export default async function HomePage() {
 
   return (
     <SiteShell
-      name={about.name}
-      tagline={about.tagline}
+      profile={about}
       navLabel="Index"
       navItems={sections.map(({ id, label }) => ({ href: `#${id}`, label }))}
     >

@@ -15,8 +15,7 @@ export default async function ProjectsPage() {
 
   return (
     <SiteShell
-      name={about.name}
-      tagline={about.tagline}
+      profile={about}
       navLabel="Projects"
       navItems={projects.map((project) => ({ href: project.href, label: project.title }))}
       back={{ href: "/", label: "Home" }}

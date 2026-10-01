@@ -53,8 +53,7 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <SiteShell
-      name={about.name}
-      tagline={about.tagline}
+      profile={about}
       navLabel="Contents"
       navItems={project.headings.map(({ id, text }) => ({ href: `#${id}`, label: text }))}
       back={{ href: "/#research", label: "Back to research" }}
