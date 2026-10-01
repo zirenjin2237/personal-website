@@ -94,7 +94,7 @@ export function SectionNav({
     <nav aria-label={label} className={vertical ? undefined : "min-w-0 flex-1"}>
       <ul
         ref={listRef}
-        className={vertical ? "space-y-0.5" : "no-scrollbar flex gap-5 overflow-x-auto px-4 whitespace-nowrap"}
+        className={vertical ? "space-y-1.5" : "no-scrollbar flex gap-5 overflow-x-auto px-4 whitespace-nowrap"}
       >
         {items.map((item) => {
           const isActive = hashId(item.href) === active;
@@ -105,7 +105,7 @@ export function SectionNav({
                 aria-current={isActive ? "location" : undefined}
                 className={
                   vertical
-                    ? `block border-l-2 py-1.5 pl-3 text-[0.9rem] leading-snug transition-colors duration-150 ${
+                    ? `inline-block border-b-2 py-1 text-[0.9rem] leading-snug transition-colors duration-150 ${
                         isActive
                           ? "border-ink font-semibold text-ink"
                           : "border-transparent text-muted hover:border-line hover:text-ink"

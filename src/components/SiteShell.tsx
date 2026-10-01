@@ -31,7 +31,7 @@ export function SiteShell({ profile, navLabel, navItems, back, children }: SiteS
         Skip to content
       </a>
 
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-sidebar flex-col justify-between overflow-y-auto border-r border-line bg-white px-6 py-10 md:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-sidebar flex-col justify-between overflow-y-auto border-r border-line bg-white px-6 py-10 text-center md:flex">
         <div>
           <div className="mb-10">
             {photo && (
@@ -56,7 +56,7 @@ export function SiteShell({ profile, navLabel, navItems, back, children }: SiteS
 
           {navItems.length > 0 && (
             <>
-              <p className="mb-3 font-mono text-[0.7rem] tracking-[0.18em] text-muted uppercase">{navLabel}</p>
+              <p className="mb-3 pl-[0.18em] font-mono text-[0.7rem] tracking-[0.18em] text-muted uppercase">{navLabel}</p>
               <SectionNav items={navItems} orientation="vertical" label={navLabel} />
             </>
           )}
