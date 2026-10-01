@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { About } from "@/lib/content";
 import { ContentImage } from "./ContentImage";
+import { ScrollLinkedColumn } from "./ScrollLinkedColumn";
 import { SectionNav, type NavItem } from "./SectionNav";
 
 interface SiteShellProps {
@@ -31,40 +32,42 @@ export function SiteShell({ profile, navLabel, navItems, back, children }: SiteS
         Skip to content
       </a>
 
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-sidebar flex-col justify-between overflow-y-auto border-r border-line bg-white px-6 py-10 text-center md:flex">
-        <div>
-          <div className="mb-10">
-            {photo && (
-              <Link href="/" tabIndex={-1} aria-hidden="true" className="relative mb-5 block aspect-[4/5] w-full overflow-hidden rounded-xl bg-line">
-                <ContentImage src={photo.src} alt="" sizes="11rem" className="object-[50%_30%]" priority />
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-sidebar overflow-hidden border-r border-line bg-white md:block">
+        <ScrollLinkedColumn className="flex min-h-full flex-col justify-between px-6 py-10 text-center">
+          <div>
+            <div className="mb-10">
+              {photo && (
+                <Link href="/" tabIndex={-1} aria-hidden="true" className="relative mb-5 block aspect-[4/5] w-full overflow-hidden rounded-xl bg-line">
+                  <ContentImage src={photo.src} alt="" sizes="11rem" className="object-[50%_30%]" priority />
+                </Link>
+              )}
+              <Link href="/" className="font-mono text-[0.95rem] leading-tight font-bold tracking-tight hover:text-accent">
+                {name}
+              </Link>
+              {tagline && <p className="mt-1.5 text-[0.82rem] leading-snug text-muted">{tagline}</p>}
+            </div>
+
+            {back && (
+              <Link
+                href={back.href}
+                className="mb-8 block font-mono text-xs text-muted transition-colors hover:text-ink"
+              >
+                ← {back.label}
               </Link>
             )}
-            <Link href="/" className="font-mono text-[0.95rem] leading-tight font-bold tracking-tight hover:text-accent">
-              {name}
-            </Link>
-            {tagline && <p className="mt-1.5 text-[0.82rem] leading-snug text-muted">{tagline}</p>}
+
+            {navItems.length > 0 && (
+              <>
+                <p className="mb-3 pl-[0.18em] font-mono text-[0.7rem] tracking-[0.18em] text-muted uppercase">{navLabel}</p>
+                <SectionNav items={navItems} orientation="vertical" label={navLabel} />
+              </>
+            )}
           </div>
 
-          {back && (
-            <Link
-              href={back.href}
-              className="mb-8 block font-mono text-xs text-muted transition-colors hover:text-ink"
-            >
-              ← {back.label}
-            </Link>
-          )}
-
-          {navItems.length > 0 && (
-            <>
-              <p className="mb-3 pl-[0.18em] font-mono text-[0.7rem] tracking-[0.18em] text-muted uppercase">{navLabel}</p>
-              <SectionNav items={navItems} orientation="vertical" label={navLabel} />
-            </>
-          )}
-        </div>
-
-        <p className="mt-10 font-mono text-[0.7rem] text-muted">
-          © {year} {name}
-        </p>
+          <p className="mt-10 font-mono text-[0.7rem] text-muted">
+            © {year} {name}
+          </p>
+        </ScrollLinkedColumn>
       </aside>
 
       <header className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-b border-line bg-white/95 backdrop-blur-sm md:hidden">
