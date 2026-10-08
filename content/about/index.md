@@ -18,8 +18,6 @@ links:
   # cv: "./cv.pdf"              # drop cv.pdf next to this file
 ---
 
-<!-- SAMPLE BIO: replace these paragraphs with your own. HTML comments are not rendered. -->
+I'm Ziren Jin, an undergraduate studying Computer Science at the University of Michigan. My interests lie in AI for Science, particularly machine learning for materials science, machine-learned interatomic potentials, and scientific computing.
 
-I'm an undergraduate studying Computer Science at the University of Michigan.
-
-This paragraph is placeholder text. Write your bio in plain Markdown — **bold**, *italics* and [links](https://github.com/zirenjin) all work. The first paragraph is shown larger; the rest are set in gray.
+I'm currently a research assistant in the [Goldsmith Lab](https://goldsmithlab.engin.umich.edu/) at the University of Michigan, working on atomistic modeling and machine-learned potentials. I'm also a machine learning intern at the [AI for Science Institute](https://www.aisi.ac.cn/#/) (AISI) in Beijing, focusing on machine learning infrastructure for [DeePMD-Kit](https://github.com/deepmodeling/deepmd-kit).
