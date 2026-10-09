@@ -48,8 +48,8 @@ jobs:
       - name: Build static site
         run: npm run build
         env:
-          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          SITE_URL: ${{ steps.pages.outputs.base_url }}
+          PAGES_BASE_PATH: ""
+          SITE_URL: "https://zirenjin.com"
           NEXT_TELEMETRY_DISABLED: 1
 
       - name: Upload artifact
