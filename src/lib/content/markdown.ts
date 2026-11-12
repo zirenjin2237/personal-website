@@ -52,10 +52,14 @@ function isWhitespace(node: ElementContent): boolean {
   return node.type === "text" && node.value.trim() === "";
 }
 
+const WIDE_SUFFIX = "#wide";
+
 /**
  * Resolves relative `src`/`href` against the entry's folder, turns a paragraph
  * that holds a single image into a `<figure>` (the image title becomes the
  * caption), wraps tables for horizontal scrolling, and collects headings.
+ * An image whose path ends in `#wide` becomes a figure that may extend past
+ * the text column on large screens and links to the full-size file.
  */
 function rehypeContent(entry: Pick<RawEntry, "dir" | "file">, headings: Heading[]) {
   return (tree: HastRoot) => {
@@ -85,14 +89,27 @@ function rehypeContent(entry: Pick<RawEntry, "dir" | "file">, headings: Heading[
         const image = content[0];
         if (content.length === 1 && image.type === "element" && image.tagName === "img") {
           const caption = typeof image.properties.title === "string" ? image.properties.title : undefined;
+          // Parents are visited before children, so the image `src` is still unresolved here.
+          const src = image.properties.src;
+          const wide = typeof src === "string" && src.endsWith(WIDE_SUFFIX);
+          if (wide) image.properties.src = (src as string).slice(0, -WIDE_SUFFIX.length);
           delete image.properties.title;
+          const fullSize = String(image.properties.src);
+          const body: ElementContent = wide
+            ? {
+                type: "element",
+                tagName: "a",
+                properties: { href: resolveAsset(fullSize, entry) ?? fullSize, target: "_blank", rel: ["noopener"], title: "Open full size" },
+                children: [image],
+              }
+            : image;
           const figure: Element = {
             type: "element",
             tagName: "figure",
-            properties: {},
+            properties: wide ? { className: ["figure-wide"] } : {},
             children: caption
-              ? [image, { type: "element", tagName: "figcaption", properties: {}, children: [{ type: "text", value: caption }] }]
-              : [image],
+              ? [body, { type: "element", tagName: "figcaption", properties: {}, children: [{ type: "text", value: caption }] }]
+              : [body],
           };
           parent.children[index] = figure;
         }

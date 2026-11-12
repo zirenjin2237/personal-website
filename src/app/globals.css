@@ -196,6 +196,13 @@ header + .markdown > h2:first-child {
   margin-block: 2em;
 }
 
+/* `![…](./fig.png#wide)`: on large screens, use the free space right of the text column. */
+@media (min-width: 64rem) {
+  .markdown figure.figure-wide {
+    width: max(100%, min(68rem, calc(100vw - var(--spacing-sidebar) - 8rem)));
+  }
+}
+
 .markdown figcaption {
   margin-top: 0.8em;
   font-size: 0.85rem;
