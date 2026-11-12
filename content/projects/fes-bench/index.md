@@ -10,8 +10,6 @@ status: "Manuscript in preparation"
 summary: "Machine-learned potentials follow atoms for nanoseconds; phase-field models need free energies that hold for hours. FES-Bench measures how accurate those free energies must be to place a phase transition, and where the remaining error comes from."
 featured: true
 order: 1
-cover: "./figures/cover.png"
-coverAlt: "Reference and predicted free-energy difference for one polymorph pair, with the reference crossing window shaded"
 tags:
   - Machine Learning Interatomic Potential
   - Phase stability
