@@ -4,4 +4,5 @@ role: "Undergraduate Research Assistant"
 start: "2026-01"
 end: "present"
 location: "Ann Arbor, MI"
+logo: "./_logos/goldsmith.png"
 ---

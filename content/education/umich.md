@@ -5,6 +5,7 @@ department: "College of Engineering"
 start: "2025"
 end: "2029"
 location: "Ann Arbor, MI"
+logo: "./_logos/umich.svg"
 url: "https://umich.edu"
 note: "Expected graduation: April 2029"
 order: 1

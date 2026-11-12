@@ -20,8 +20,8 @@ export function TimelineEntry({
   return (
     <article className="flex items-start gap-5">
       {logo && (
-        <div className="relative size-12 shrink-0 overflow-hidden rounded-full border border-line bg-white">
-          <ContentImage src={logo} alt={logoAlt} sizes="3rem" fit="contain" />
+        <div className="relative mt-0.5 size-10 shrink-0 overflow-hidden rounded-[5px] border border-line bg-white">
+          <ContentImage src={logo} alt={logoAlt} sizes="2.5rem" fit="contain" />
         </div>
       )}
       <div className="min-w-0 flex-1">
