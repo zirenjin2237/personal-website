@@ -6,6 +6,7 @@ authors:
   - "Ziren Jin"
 status: "Released in DeePMD-kit · grouped-property training under review"
 summary: "A DeePMD-kit module that adapts pretrained DPA models to property prediction, from frozen-descriptor baselines to full and multi-task fine-tuning, without writing DeePMD-kit training configs."
+featured: true
 order: 2
 tags:
   - Machine Learning Interatomic Potential

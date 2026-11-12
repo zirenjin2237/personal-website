@@ -4,13 +4,14 @@ subtitle: "How accurate must a machine-learned free energy be to place a phase t
 date: "2026-09"
 authors:
   - "Ziren Jin"
-  - "Duo Zhang"
+  - name: "Duo Zhang"
+    url: "https://scholar.google.com/citations?user=JQNv-AQAAAAJ&hl=en"
 status: "Manuscript in preparation"
 summary: "A benchmark for free-energy differences and phase crossings predicted by machine-learned interatomic potentials."
 featured: true
 order: 1
-cover: "./figures/crossing-examples.png"
-coverAlt: "Reference and predicted free-energy differences for three polymorph pairs, with the reference crossing marked"
+cover: "./figures/cover.png"
+coverAlt: "Reference and predicted free-energy difference for one polymorph pair, with the reference crossing window shaded"
 tags:
   - Machine Learning Interatomic Potential
   - Phase stability

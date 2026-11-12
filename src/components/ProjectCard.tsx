@@ -11,7 +11,7 @@ export function ProjectCard({ project, owner }: { project: Project; owner: strin
   return (
     <article className="group relative flex gap-6 border border-wash-line bg-wash p-5 transition-colors hover:border-muted/50 sm:p-6">
       {project.cover && (
-        <div className="relative hidden aspect-[3/2] w-40 shrink-0 overflow-hidden bg-line sm:block">
+        <div className="relative hidden aspect-[3/2] w-40 shrink-0 self-start overflow-hidden bg-white sm:block">
           <ContentImage
             src={project.cover.src}
             alt={project.cover.alt}

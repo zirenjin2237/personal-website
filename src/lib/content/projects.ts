@@ -7,13 +7,19 @@ import { displayUrl, isExternal, PROJECT_LINK_LABELS, type LinkItem, type Projec
 import { renderMarkdown, type Heading } from "./markdown";
 import { projectSchema } from "./schemas";
 
+export interface Author {
+  name: string;
+  url?: string;
+  external: boolean;
+}
+
 export interface Project {
   slug: string;
   href: string;
   title: string;
   subtitle?: string;
   date?: string;
-  authors: string[];
+  authors: Author[];
   venue?: string;
   status?: string;
   summary?: string;
@@ -58,7 +64,10 @@ const loadProjects = cache(() => {
       title: data.title,
       subtitle: data.subtitle,
       date: data.date,
-      authors: data.authors,
+      authors: data.authors.map(({ name, url }) => {
+        const href = url ? resolveAsset(url, entry) : undefined;
+        return { name, url: href, external: href ? isExternal(href) : false };
+      }),
       venue: data.venue,
       status: data.status,
       summary: data.summary,

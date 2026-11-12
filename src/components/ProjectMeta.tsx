@@ -1,17 +1,45 @@
 import { formatDate, type Project } from "@/lib/content";
 import { TextLink } from "./TextLink";
 
-/** Author list with the site owner's name emphasised. */
-export function Authors({ authors, highlight, className = "" }: { authors: string[]; highlight: string; className?: string }) {
+/**
+ * Author list with the site owner's name emphasised. Linked names sit above a
+ * card's stretched title link (`relative z-10`) so they stay clickable.
+ */
+export function Authors({
+  authors,
+  highlight,
+  className = "",
+}: {
+  authors: Project["authors"];
+  highlight: string;
+  className?: string;
+}) {
   if (authors.length === 0) return null;
   return (
     <p className={className}>
-      {authors.map((author, index) => (
-        <span key={`${author}-${index}`}>
-          {index > 0 && ", "}
-          {author.replace(/[*†‡§]+$/, "") === highlight ? <strong className="font-semibold">{author}</strong> : author}
-        </span>
-      ))}
+      {authors.map((author, index) => {
+        const name =
+          author.name.replace(/[*†‡§]+$/, "") === highlight ? (
+            <strong className="font-semibold">{author.name}</strong>
+          ) : (
+            author.name
+          );
+        return (
+          <span key={`${author.name}-${index}`}>
+            {index > 0 && ", "}
+            {author.url ? (
+              <TextLink
+                link={{ href: author.url, external: author.external }}
+                className="relative z-10 underline decoration-line underline-offset-4 hover:text-accent hover:decoration-accent"
+              >
+                {name}
+              </TextLink>
+            ) : (
+              name
+            )}
+          </span>
+        );
+      })}
     </p>
   );
 }

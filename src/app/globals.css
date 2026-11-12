@@ -97,6 +97,12 @@ body {
   font-size: 1.35rem;
 }
 
+/* No double rule when a project page has no cover: the header already ends with a border. */
+header + .markdown > h2:first-child {
+  margin-top: 0;
+  border-top: 0;
+}
+
 .markdown h3 {
   margin-top: 2em;
   font-size: 1.1rem;

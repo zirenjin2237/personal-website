@@ -55,11 +55,18 @@ function linksObject<K extends string>(labels: Record<K, string>, overrides: Par
   return z.preprocess(blankToUndefined, z.strictObject(shape).default({} as never));
 }
 
+/** An author is a plain name, or `{ name, url }` to link the name (e.g. to a Google Scholar profile). */
+const author = z.union([
+  text.transform((name) => ({ name, url: undefined as string | undefined })),
+  z.strictObject({ name: text, url: optionalLink }),
+]);
+const authorList = z.preprocess(blankToUndefined, z.array(author).default([]));
+
 export const projectSchema = z.strictObject({
   title: text,
   subtitle: optionalText,
   date: optionalDate,
-  authors: stringList,
+  authors: authorList,
   venue: optionalText,
   status: optionalText,
   summary: optionalText,

@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: project.title,
       description: project.summary,
       url: absoluteUrl(project.href),
-      authors: project.authors,
+      authors: project.authors.map((author) => author.name),
       tags: project.tags,
       images,
     },
@@ -88,12 +88,13 @@ export default async function ProjectPage({ params }: Props) {
           </header>
 
           {project.cover && (
-            <figure className="relative mt-10 aspect-[16/9] overflow-hidden border border-line bg-wash">
+            <figure className="relative mt-10 aspect-[16/9] overflow-hidden border border-line bg-white">
               <ContentImage
                 src={project.cover.src}
                 alt={project.cover.alt}
                 sizes="(min-width: 1024px) 46rem, 100vw"
                 priority
+                fit="contain"
               />
             </figure>
           )}

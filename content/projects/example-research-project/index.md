@@ -2,6 +2,7 @@
 # SAMPLE PROJECT — shows every supported feature. Copy the folder structure,
 # then replace or delete this project.
 title: "Example Research Project"
+draft: true   # sample only; hidden from the live site
 subtitle: "A sample page demonstrating math, figures, tables and code"
 date: "2026-09"
 authors:

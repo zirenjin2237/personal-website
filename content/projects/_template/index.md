@@ -6,6 +6,8 @@ subtitle: ""
 date: "2026-09"                      # "2026", "2026-09" or "2026-09-15"
 authors:
   - "Ziren Jin"
+  # - name: "Co-author"               # a linked name
+  #   url: "https://scholar.google.com/..."
 venue: ""
 status: ""
 summary: ""                          # shown on the homepage card and in link previews
