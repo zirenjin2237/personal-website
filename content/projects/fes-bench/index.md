@@ -22,7 +22,7 @@ links:
 
 ## The gap is in time, not size
 
-We came up with this project while trying to answer how to get from atoms to the behaviour of a real material. It is tempting to think of this as a gap in length, from ångströms to millimetres. In materials simulation it is really a gap in **time**. Machine-learned interatomic potentials (MLIPs) follow atoms accurately over femtoseconds to nanoseconds, but a phase transformation at the macroscale often takes seconds or even hours. Faster molecular dynamics alone will not close a gap that size.
+We came up with this project while trying to answer how to get from atoms to the behaviour of a real material. It is tempting to think of this as a gap in length, from ångströms to millimetres. In materials simulation it is really a gap in **time**. Machine-learned interatomic potentials (MLIPs) follow atoms accurately over femtoseconds to nanoseconds, but a phase transformation at the macroscale often takes seconds to even hours. Faster molecular dynamics alone will not close a gap that size.
 
 What can cross it is a short list of parameters. A phase-field model [1] does not need trajectories. It needs free energies, interface energies and mobilities. If the atomistic side can deliver those numbers very cheaply and with acceptable accuracy, the two scales connect.
 
@@ -32,15 +32,15 @@ There are already several ways to get a free energy. Each one gives something up
 
 | Route | How it works | Good at | Gives up |
 | --- | --- | --- | --- |
-| Thermodynamic integration [2] | Molecular dynamics along a path to a reference system, at every temperature and pressure | Full anharmonicity; the reference method | Days of GPU time even for a simple system, so no screening |
-| CALPHAD [3] | Gibbs-energy models fitted to experiments and calculations | Accurate and fast inside an assessed system | A new chemistry needs new data and a new fit |
-| Descriptor models [4, 5] | One fitted expression from volume, mass or composition | Instant, and applies to any material | Errors of tens of meV/atom; in our benchmark only 5% of crossings within ±50 K |
+| Thermodynamic integration [2] | Molecular dynamics along a path to a reference system, at every temperature and pressure | Full anharmonicity; the reference method | Massive GPU costs |
+| CALPHAD [3] | Gibbs-energy models fitted to experiments and calculations | Accurate and fast inside an assessed system | No extrapolation to new chemistries |
+| Descriptor models [4, 5] | One fitted expression from volume, mass or composition | Instant, and applies to any material | Errors of tens of meV/atom |
 | Phonons from pretrained MLIPs [6–9] | Phonons from a universal MLIP, then a harmonic or quasi-harmonic free energy | Cheap for thousands of structures | Misses anharmonicity [10]; validated one structure at a time [8] or at 0 K [11] |
-| Corrected and thermodynamic MLIPs [12–14] | Tune an MLIP to reference data or known transitions, or target thermodynamics directly | Combines physics and data | Has to assume how large an error is acceptable |
+| Corrected and thermodynamic MLIPs [12–14] | Tune an MLIP to reference data or known transitions, or target thermodynamics directly | Combines physics and data | Assume how large an error is acceptable |
 
 We also know from formation energies that a small regression error does not guarantee a correct stability decision [15], and high-throughput Gibbs-energy methods have been checked against experimental thermochemistry [16]. Neither tells us what accuracy a phase crossing needs.
 
-Put together, free-energy modelling has been moving from purely physics-driven methods towards physics and data working together. The aim is to keep physical accuracy while gaining speed and the ability to extrapolate to new materials. Our bet is to lean on the very high static accuracy of today's MLIPs. What we still have to work out is how much thermodynamic information an MLIP's potential-energy surface actually carries, how to keep that information from getting lost in the small difference between two phases, and how to extract it.
+Put together, free-energy modelling has been moving from purely physics-driven methods towards physics and data working together. The aim is to keep physical accuracy while gaining speed and the ability to extrapolate to new materials. Our bet is to lean on the very high static accuracy of today's MLIPs. What we still have to figure out is how much thermodynamic information an MLIP's potential-energy surface actually carries, how to keep that information from getting lost in the difference between two phases, and how to extract it.
 
 ## The idea: let physics do most of the work
 
