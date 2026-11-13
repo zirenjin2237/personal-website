@@ -18,21 +18,21 @@ links:
   project: "https://docs.deepmodeling.com/projects/deepmd/en/stable/dpa_adapt/index.html"
 ---
 
-## Three keywords and a whiteboard
+## What it is
 
-In the summer of 2026 I arrived at the AI for Science Institute (AISI) for an internship. My very first task was to build a Python adaptation interface for the DPA series of pretrained atomistic models. At the time my knowledge of machine-learning interatomic potentials was close to zero, and I had never touched a large, complex open-source codebase like DeePMD-kit [2].
+DPA-ADAPT adapts pretrained DPA models [1] to downstream property prediction, such as molecular orbital energies or band gaps. Without it, using a pretrained DPA model for a property means writing DeePMD-kit's dense JSON training configurations and running `dp train` pipelines. I wanted one interface that covers the whole range, from a quick frozen-feature baseline to end-to-end fine-tuning, without ever writing a training JSON or setting up a type map by hand.
 
-My mentor sat me down for an hour-long whiteboard session to explain the architecture. I nodded throughout, but by the end my overloaded brain had kept only three fragments: *"scikit-learn"*, *"pooling"* and *"avoid the JSON configs"*.
+I developed it with [zhaiwenxi](https://github.com/zhaiwenxi) during my internship at the AI for Science Institute (AISI). It was merged into DeePMD-kit [2] in July 2026 through [pull request #5572](https://github.com/deepmodeling/deepmd-kit/pull/5572), and it installs with one line:
 
-Those three fragments turned out to be exactly the right compass. Chemists and materials scientists wanted to use pretrained DPA models to predict downstream properties, such as molecular orbital energies or band gaps. To do that, they had to wrestle with DeePMD-kit's dense JSON training configurations and `dp train` pipelines. A good API and clear documentation could take that weight off them.
+```bash
+pip install deepmd-kit[dpa-adapt]
+```
 
-DPA-ADAPT came out of that need. I wanted one interface that covers the whole range, from a quick baseline to end-to-end fine-tuning, without the user ever writing a training JSON or setting up a type map by hand.
+It provides a command-line tool, `dpa-adapt` (short alias `dpaad`), and a Python package, `dpa_adapt`.
 
-## The Python toolkit
+## Four strategies
 
-DPA-ADAPT installs with `pip install deepmd-kit[dpa-adapt]`. It provides a command-line tool, `dpa-adapt` (short alias `dpaad`), and a Python package, `dpa_adapt`. It was merged into DeePMD-kit in July 2026 through [pull request #5572](https://github.com/deepmodeling/deepmd-kit/pull/5572).
-
-Following the breadcrumbs from that whiteboard, I built it around four training strategies. They scale from a laptop CPU to a GPU cluster, depending on how much data you have:
+We built it around four training strategies. They scale from a laptop CPU to a GPU cluster, depending on how much labeled data there is:
 
 <!-- OPTIONAL: one or two sentences on why four strategies (what you tried first, which interface you threw away). The page has no wrong turns yet; this is the best place for one. -->
 
@@ -47,7 +47,7 @@ Following the breadcrumbs from that whiteboard, I built it around four training 
 
 ## What a run looks like
 
-The goal was a pipeline that looks like ordinary data science. Here is the minimal workflow: convert structures, train a random forest on frozen DPA-3.1 features [1], and predict a HOMO energy.
+My goal was a pipeline that looks like ordinary data science. Here is the minimal workflow: convert structures, train a random forest on frozen DPA-3.1 features [1], and predict a HOMO energy.
 
 ```bash
 # 1. Convert structures to DeePMD numpy format
@@ -64,7 +64,7 @@ dpa-adapt predict --model model.pth --data ./npy/test --output pred.npy
 dpa-adapt evaluate --model model.pth --data ./npy/test
 ```
 
-If you prefer code, the same steps are available in Python through the `DPAFineTuner` and `DPAPredictor` classes.
+The same steps are also available in Python through the `DPAFineTuner` and `DPAPredictor` classes.
 
 Frozen descriptors are extracted once and cached on disk, so refitting a baseline takes seconds. A DeePMD training run on the same data takes hours. <!-- TODO: replace "seconds" and "hours" with measured numbers: frozen_sklearn fit time versus one DeePMD run on the same dataset. -->
 
@@ -73,30 +73,29 @@ Frozen descriptors are extracted once and cached on disk, so refitting a baselin
 Under the hood, DPA-ADAPT takes care of the data wrangling that usually slows materials informatics down:
 
 - **Input data.** It reads `deepmd/npy`, SMILES CSV files (3D conformers generated with RDKit) and about 60 other structure formats through dpdata.
-- **Pooling** (the second keyword). Per-atom representations become one feature vector per structure by `mean`, `sum`, `mean+std` or `mean+std+max+min`.
-- **Regressors** (the first keyword). `frozen_sklearn` offers random forest, ridge regression and MLP.
+- **Pooling.** Per-atom representations become one feature vector per structure by `mean`, `sum`, `mean+std` or `mean+std+max+min`.
+- **Regressors.** `frozen_sklearn` offers random forest, ridge regression and MLP.
 - **Uncertainty.** Random-forest out-of-bag variance, or an MLP committee.
 - **Context features.** `fparam` columns feed conditions such as temperature or composition descriptors directly into the head.
 - **Validation.** Formula-grouped cross-validation is built in, so the same composition never sits on both sides of a split.
-
 
 ## Labels that belong to several structures
 
 ### Overpotentials
 
-Eventually you hit a wall. The first one came from Yuxiang, who studies oxygen-evolution catalysts in our group. 
+Eventually I hit a wall. The first one came from Yuxiang Liu, who studies oxygen-evolution catalysts in our group.
 
 Her data arrived as a folder dated 14 May: a base slab, two scripts and a list of compositions. The slab has 350 atoms (100 Ni, 50 H, 200 O). For each of 19 compositions, such as `Ni0.50Co0.15Fe0.15Gd0.15Lu0.05`, her script substitutes other metals (Co, Fe, rare earths) onto the Ni sites at random, ten times. Each substitution becomes three structures: the slab with O\*, OH\* or OOH\* adsorbed on top, padded with virtual atoms so that all three have 353 atoms. The label is one overpotential per composition, between 241.6 and 316.6.
 
 That makes 190 groups of three frames, 570 frames in all, but only 19 distinct labels. Her split script keeps every random structure of a composition on the same side of the split (five folds of 13–14 training and 3–4 validation compositions, plus two held-out test compositions). Any accuracy number on this set is a statement about 19 compositions.
 
-The label belongs to the three structures together. An overpotential is set by the energy differences between the O\*, OH\* and OOH\* intermediates, so no single frame determines it. DeePMD-kit's property training expects one label per frame, so her script copies the overpotential onto all three frames (`np.full((nframes, 1), overpotential)`). A frame-level head is then asked to read the number off O\* alone, and the differences that set it are never seen together.
+The label belongs to the three structures together. An overpotential is set by the energy differences between the O\*, OH\* and OOH\* intermediates, so no single frame determines it. DeePMD-kit's property training expects one label per frame, so the existing setup assigned the group label to each of the three frames. A frame-level head is then asked to read the number off O\* alone, and the differences that set it are never seen together.
 
 The configuration for this task ran to 266 lines of JSON: 118 element symbols listed one per line, a 16-layer DPA-3 descriptor block, a force-field head and a property head with a 50/50 sampling probability between them.
 
 ### Grouped training
 
-For these cases I designed **grouped-property training** ([pull request #5982](https://github.com/deepmodeling/deepmd-kit/pull/5982)). It learns labels defined over a collection of structures, an idea related to building a whole material from its parts, as fragment-based training does for MOF potentials [4].
+For these cases I designed **grouped-property training** ([pull request #5982](https://github.com/deepmodeling/deepmd-kit/pull/5982)), which I lead and which is still under review. It learns labels defined over a collection of structures, an idea related to building a whole material from its parts, as fragment-based training does for MOF potentials [4].
 
 - Per-frame representations are pooled into one group embedding, and the loss is computed once per group.
 - Groups are declared inside ordinary `deepmd/npy` data, so no new training entry point is needed.
@@ -110,7 +109,7 @@ Each `set.*` directory gets up to three extra files:
 | `weight.npy` | (nframes,) | weight of each frame or component in pooling |
 | `pool_mask.npy` | (nframes, natoms) | which atoms are included in pooling |
 
-Pooling is a weighted mean or a weighted sum (`group_reduce`), for intensive and extensive properties. `dpa-adapt data mark-groups` writes the group files for you. The pull request also adds an optional training-time regularizer and a post-training calibrator.
+Pooling is a weighted mean or a weighted sum (`group_reduce`), for intensive and extensive properties. `dpa-adapt data mark-groups` writes the group files. The pull request also adds an optional training-time regularizer and a post-training calibrator.
 
 Yuxiang's layout, one system directory per labeled group, is the one the documentation now calls the common OER layout. The whole job is two calls (this snippet is from the PR documentation):
 
@@ -137,18 +136,32 @@ model.fit(train_data="oer/train/*", valid_data="oer/valid/*")
 
 A second kind of label is the cloud point of a polymer, which depends on its repeat units and end groups together [3]. A sample is a group of components, each with a weight, and the label is a temperature in °C. The dataset has 591 groups.
 
-In the July runs, the best grouped model (15,000 steps) reached an RMSE of 7.1 °C on the training groups and 7.7 °C on validation, with the slope of predicted against true values at 0.78 and 0.70. On a split that holds out the highest cloud points, the RMSE was 25.9 °C and the slope was 0.07: the model puts almost every polymer in that range near the middle of the training distribution.
+In the July runs, my best grouped model (15,000 steps) reached an RMSE of 7.1 °C on the training groups and 7.7 °C on validation, with the slope of predicted against true values at 0.78 and 0.70. On a split that holds out the highest cloud points, the RMSE was 25.9 °C and the slope was 0.07: the model puts almost every polymer in that range near the middle of the training distribution.
 
 The gap between training and validation error was only 0.6 °C, so this was not overfitting. A nearest-neighbour check on the model's inputs showed why. Among the 141 tail samples in the training set, the nearest neighbour's label differs by a median of 2.4 °C, but for 24% it differs by more than 10 °C and for 9% by more than 20 °C. The worst pair sits 0.43 apart in the input space of the check and has cloud points of 19.5 °C and 61.5 °C. Those two samples look the same to the model and have labels 42 °C apart, so something that sets the cloud point is not in the input.
 
 Two obvious fixes did not help. Adding molecular weight, dispersity and tacticity as extra features gave no improvement, and `mft` made the compression worse (training slope 0.60 against 0.78 for the best run). MFT is designed to protect the pretrained representation under distribution shift [5]; here the limit looks like missing information in the input, and the multi-task term cannot add it. <!-- TODO: update with the latest cloud-point runs if the missing variable has been found since July. -->
 
-
 ## What's next?
 
-The whiteboard hour left me three words. `scikit-learn` became the `fit` / `predict` / `evaluate` interface and the `frozen_sklearn` strategy. `pooling` became the step from atoms to structures, and then from structures to groups. "Avoid the JSON configs" is the difference between 266 lines and the few lines above.
-
 DPA-ADAPT is still under active development. The four strategies are released in DeePMD-kit, and grouped-property training is under review. I am adding support for the newest DPA-4 models, testing it on more MLIP tasks, refining the documentation, and optimizing speed and memory use. Issues and suggestions are welcome on [GitHub](https://github.com/deepmodeling/deepmd-kit).
+
+## How it started
+
+When I arrived at AISI in the summer of 2026, this was my very first task. My knowledge of machine-learning interatomic potentials was close to zero, and I had never touched a codebase as large as DeePMD-kit.
+
+My mentor sat me down for an hour-long whiteboard session to explain the architecture. I nodded throughout, but by the end my overloaded brain had kept only three fragments: *"scikit-learn"*, *"pooling"* and *"avoid the JSON configs"*.
+
+Those three fragments turned out to be the right compass. `scikit-learn` became the `fit` / `predict` / `evaluate` interface and the `frozen_sklearn` strategy. `pooling` became the step from atoms to structures, and then from structures to groups. "Avoid the JSON configs" is the difference between the 266-line configuration above and the few lines of the grouped-training example.
+
+## Contributions
+
+- **DPA-ADAPT toolkit** ([#5572](https://github.com/deepmodeling/deepmd-kit/pull/5572), merged July 2026): developed together with [zhaiwenxi](https://github.com/zhaiwenxi).
+- **Grouped-property training** ([#5982](https://github.com/deepmodeling/deepmd-kit/pull/5982), under review): led by me.
+
+## Acknowledgements
+
+I thank Yuxiang Liu for sharing her OER dataset and scripts. Her data was the first real case that grouped-property training had to handle, and it shaped how the feature works.
 
 ## References
 

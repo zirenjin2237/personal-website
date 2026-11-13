@@ -71,6 +71,8 @@ export const projectSchema = z.strictObject({
   status: optionalText,
   summary: optionalText,
   featured: z.boolean().default(false),
+  /** `false`: show only the card (no link, no project page). */
+  page: z.boolean().default(true),
   order,
   cover: optionalText,
   coverAlt: optionalText,

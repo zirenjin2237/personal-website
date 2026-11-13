@@ -24,6 +24,8 @@ export interface Project {
   status?: string;
   summary?: string;
   featured: boolean;
+  /** False for card-only projects, which have no page of their own. */
+  page: boolean;
   tags: string[];
   cover?: { src: string; alt: string };
   links: LinkItem[];
@@ -72,6 +74,7 @@ const loadProjects = cache(() => {
       status: data.status,
       summary: data.summary,
       featured: data.featured,
+      page: data.page,
       tags: data.tags,
       cover: coverSrc ? { src: coverSrc, alt: data.coverAlt ?? "" } : undefined,
       links,
@@ -96,7 +99,7 @@ export async function getFeaturedProjects(): Promise<Project[]> {
 }
 
 export async function getProject(slug: string): Promise<ProjectDetail | undefined> {
-  const found = loadProjects().find(({ project }) => project.slug === slug);
+  const found = loadProjects().find(({ project }) => project.slug === slug && project.page);
   if (!found) return undefined;
   const { html, headings } = await renderMarkdown(found.entry.body, found.entry, { mode: "page" });
   return { ...found.project, html, headings };

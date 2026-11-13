@@ -9,6 +9,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: absoluteUrl("/") },
     { url: absoluteUrl("/projects/") },
-    ...projects.map((project) => ({ url: absoluteUrl(project.href) })),
+    ...projects.filter((project) => project.page).map((project) => ({ url: absoluteUrl(project.href) })),
   ];
 }

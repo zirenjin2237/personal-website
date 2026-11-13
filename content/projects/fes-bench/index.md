@@ -20,6 +20,16 @@ links:
   code: "https://github.com/zirenjin/fes-bench"
 ---
 
+**TL;DR**
+
+- **Question.** How accurate must a machine-learned free energy be to place a polymorph transition? To land the median crossing within ±50 K, the error budget is about 0.4 meV/atom. An error of 1 meV/atom moves it by about 130 K.
+- **Pretrained MLIPs miss most crossings.** DPA-3.1 and MatterSim, used without fine-tuning, place fewer than 1 in 10 of the 93 reference crossings (among 320 polymorph pairs) within ±50 K. A 30% lower single-phase error did not give a lower phase-relative error.
+- **A small correction helps when data is enough.** A symmetry-constrained short-range force-constant correction on top of the MLIP raises the hit rate to 59% (DPA-3.1) and 46% (MatterSim) with full data. With a random quarter of the data, the gain is lost.
+- **High-temperature phases need a different baseline.** Every bcc metal phase and high-temperature silica phase has imaginary modes under both models, so the harmonic baseline fails there. Next: take the baseline from the MLIP's own finite-temperature simulations.
+- *Development results; numbers may change before publication.*
+
+![Distributions of the reference free-energy difference, the crossing budget and model errors on a common logarithmic axis](./figures/error-scales.png "All the scales on one axis: the reference difference, the ±50 K budget, and the errors of DPA-3.1 and of a descriptor baseline. Development data.")
+
 ## The gap is in time, not size
 
 We came up with this project while trying to answer how to get from atoms to the behaviour of a real material. It is tempting to think of this as a gap in length, from ångströms to millimetres. In materials simulation it is really a gap in **time**. Machine-learned interatomic potentials (MLIPs) follow atoms accurately over femtoseconds to nanoseconds, but a phase transformation at the macroscale often takes seconds to even hours. Faster molecular dynamics alone will not close a gap that size.
@@ -70,9 +80,7 @@ So a temperature tolerance only means something relative to a stated reference H
 
 Competing polymorphs have very similar entropies, so $\Delta S$ is tiny and $\Delta G(T)$ is nearly flat around the crossing. A small energy error therefore slides the crossing a long way. Turning a temperature tolerance $\tau$ into an energy budget gives $\varepsilon_\tau = \tau\,|\Delta S|$, which is different for every pair.
 
-On our set of same-composition polymorph pairs, placing the median crossing within ±50 K needs about **0.4 meV/atom** of accuracy in the phase-relative free energy. Put the other way round, 1 meV/atom of error moves the median crossing by roughly 130 K. For scale, the typical free-energy difference between two such phases at 1000 K is about 8 meV/atom, and a good pretrained MLIP is off by about as much on each single phase.
-
-![Distributions of the reference free-energy difference, the crossing budget and model errors on a common logarithmic axis](./figures/error-scales.png "All the scales on one axis: the reference difference, the ±50 K budget, and the errors of DPA-3.1 and of a descriptor baseline. Development data.")
+On our set of same-composition polymorph pairs, placing the median crossing within ±50 K needs about **0.4 meV/atom** of accuracy in the phase-relative free energy. Put the other way round, 1 meV/atom of error moves the median crossing by roughly 130 K. For scale, the typical free-energy difference between two such phases at 1000 K is about 8 meV/atom, and a good pretrained MLIP is off by about as much on each single phase. The figure at the top of this page puts all of these scales on one axis.
 
 What does a budget of a few tenths of a meV/atom look like in practice? Silica again. We trained a small linear readout on top of a frozen DPA model to predict the free energy of β-cristobalite, a phase it never saw, from the reference free energies of two or three other silica phases. The readout uses DPA descriptors, the volume, or both.
 
@@ -149,6 +157,10 @@ For these phases the baseline itself has to change. It must come from the MLIP's
 ## Status
 
 Manuscript in preparation. The numbers on this page are development results on data we have already inspected, and they may change before publication. Data, stored predictions and scoring code will be released with the paper.
+
+## Contributions
+
+I lead FES-Bench: the benchmark design, the pipeline, the experiments and analysis, and the manuscript. Duo Zhang is my main discussion partner on the project and provides the GPU time.
 
 ## References
 

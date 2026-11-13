@@ -17,7 +17,7 @@ interface Props {
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return (await getProjects()).map(({ slug }) => ({ slug }));
+  return (await getProjects()).filter((project) => project.page).map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
